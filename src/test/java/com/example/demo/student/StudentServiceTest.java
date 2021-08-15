@@ -73,6 +73,7 @@ class StudentServiceTest {
     }
 
     @Test
+    @Disabled
     void deleteStudent() {
         //given
         Long studentId = 1L;
@@ -80,19 +81,24 @@ class StudentServiceTest {
         //when
         given(studentRepository.existsById(student.getId()))
           .willReturn(true);
+        //then
         underTest.deleteStudent(studentId);
+    }
+    @Test
+    void willThrowWhenIdIsTaken() {
+        //given
+        Long studentId = 1L;
+        Student student = new Student(studentId,"Jamal","jacob@gmail.com",Gender.FEMALE);
+        //when
+        given(studentRepository.existsById(student.getId()))
+                .willReturn(true);
+       //
 
-
-
-        //given(studentRepository.existsById(studentId))
-        //  .willReturn(true);
-       // verify(studentRepository, times(1)).delete(student);
-
-        //given(studentRepository.existsById(studentId))
-            //   .willReturn(true);
-        ///verify(studentRepository, never()).deleteById(studentId);
-//        assertThatThrownBy(()->underTest.deleteStudent(studentId))
-//                .isInstanceOf(BadRequestException.class)
-//                .hasMessageContaining("Student with id " + studentId + " does not exists");
+        //then
+        assertThatThrownBy(()->underTest.deleteStudent(studentId))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("Student with id " + studentId + " does not exists");
+        verify(studentRepository, never()).deleteById(studentId);
+        //underTest.deleteStudent(studentId);
     }
 }
